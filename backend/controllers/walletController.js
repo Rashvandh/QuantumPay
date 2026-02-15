@@ -74,7 +74,7 @@ const sendMoney = async (req, res) => {
         }
 
         const sender = await User.findById(req.user._id);
-        const receiver = await User.findOne({ upiId: receiverUpiId });
+        const receiver = await User.findOne({ upiId: { $regex: new RegExp(`^${receiverUpiId}$`, 'i') } });
 
         if (!sender) return res.status(404).json({ message: 'Sender not found' });
 

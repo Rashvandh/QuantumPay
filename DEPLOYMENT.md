@@ -22,7 +22,7 @@ This guide uses **Render** for backend and **Vercel** for frontend (both free ti
 1. Go to [MongoDB Atlas](https://www.mongodb.com/cloud/atlas)
 2. Create a free cluster
 3. Click **"Connect"** → **"Connect your application"**
-4. Copy the connection string (looks like: `mongodb+srv://username:password@cluster.mongodb.net/quantumpay`)
+4. Copy the connection string (looks like: `mongodb+srv://arashvandh85:Rashvandh123@cluster0.nqpuj.mongodb.net/quantumpay`)
 5. Replace `<password>` with your actual password
 6. Save this connection string for later
 
