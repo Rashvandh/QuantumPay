@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Send, Loader2, CheckCircle, XCircle, User, AtSign, IndianRupee } from 'lucide-react';
 import { ToastNotification } from '@/components/ToastNotification';
@@ -9,10 +9,19 @@ type FormState = 'idle' | 'loading' | 'success' | 'error';
 
 export default function SendMoneyPage() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [receiverName, setReceiverName] = useState('');
   const [upiId, setUpiId] = useState('');
   const [amount, setAmount] = useState('');
   const [formState, setFormState] = useState<FormState>('idle');
+
+  // Load from URL if present (for QR scanning)
+  useEffect(() => {
+    const upi = searchParams.get('upi');
+    const name = searchParams.get('name');
+    if (upi) setUpiId(upi);
+    if (name) setReceiverName(name);
+  }, [searchParams]);
   const [backendError, setBackendError] = useState<string | null>(null);
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -43,7 +52,7 @@ export default function SendMoneyPage() {
 
       setFormState('success');
       setToast({ message: `₹${parseFloat(amount).toLocaleString()} sent to ${receiverName}!`, type: 'success' });
-      
+
       // Navigate to dashboard to refresh balance
       setTimeout(() => {
         navigate('/dashboard');

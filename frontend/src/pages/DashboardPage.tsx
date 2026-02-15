@@ -1,11 +1,12 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Send, Plus, Clock, User, ArrowUpRight, ArrowDownLeft, TrendingUp, Wallet } from 'lucide-react';
+import { Send, Plus, Clock, User, ArrowUpRight, ArrowDownLeft, TrendingUp, Wallet, Camera } from 'lucide-react';
 import { AnimatedCounter } from '@/components/AnimatedCounter';
 import { SkeletonBalance, SkeletonRow } from '@/components/Skeletons';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { apiFetch, API_ENDPOINTS } from '@/lib/api';
+import QRScanner from '@/components/QRScanner';
 
 // Placeholder chart data - will come from API
 const placeholderChartData = [
@@ -44,6 +45,32 @@ export default function DashboardPage() {
   const [chartData, setChartData] = useState(placeholderChartData);
   const [isLoadingBalance, setIsLoadingBalance] = useState(true);
   const [isLoadingTransactions, setIsLoadingTransactions] = useState(true);
+  const [isScannerOpen, setIsScannerOpen] = useState(false);
+
+  const handleScan = (data: string) => {
+    setIsScannerOpen(false);
+    // Parse UPI link: upi://pay?pa=upiid@bank&pn=UserName
+    try {
+      if (data.startsWith('upi://pay')) {
+        const url = new URL(data);
+        const pa = url.searchParams.get('pa');
+        const pn = url.searchParams.get('pn');
+        if (pa) {
+          navigate(`/send?upi=${pa}${pn ? `&name=${encodeURIComponent(pn)}` : ''}`);
+          return;
+        }
+      }
+
+      // If it's just a raw UPI ID
+      if (data.includes('@')) {
+        navigate(`/send?upi=${data}`);
+      } else {
+        alert("Invalid QR Code. Please scan a valid QuantumPay UPI QR.");
+      }
+    } catch (e) {
+      console.error("Failed to parse QR data", e);
+    }
+  };
 
   // Simulate API fetch - replace with actual API calls
   const fetchDashboardData = useCallback(async () => {
@@ -100,14 +127,19 @@ export default function DashboardPage() {
   useEffect(() => { fetchDashboardData(); }, [fetchDashboardData]);
 
   const quickActions = [
-    { icon: Send, label: 'Send Money', path: '/send', color: 'from-blue-500 to-blue-600' },
-    { icon: Plus, label: 'Add Money', path: '/add-money', color: 'from-emerald-500 to-emerald-600' },
-    { icon: Clock, label: 'History', path: '/transactions', color: 'from-violet-500 to-violet-600' },
-    { icon: User, label: 'Profile', path: '/profile', color: 'from-amber-500 to-amber-600' },
+    { icon: Camera, label: 'Scan & Pay', onClick: () => setIsScannerOpen(true), color: 'from-orange-500 to-orange-600' },
+    { icon: Send, label: 'Send Money', onClick: () => navigate('/send'), color: 'from-blue-500 to-blue-600' },
+    { icon: Plus, label: 'Add Money', onClick: () => navigate('/add-money'), color: 'from-emerald-500 to-emerald-600' },
+    { icon: User, label: 'Profile', onClick: () => navigate('/profile'), color: 'from-amber-500 to-amber-600' },
   ];
 
   return (
     <motion.div variants={stagger} initial="hidden" animate="show" className="page-enter space-y-6">
+      <QRScanner
+        isOpen={isScannerOpen}
+        onClose={() => setIsScannerOpen(false)}
+        onScan={handleScan}
+      />
       {/* Balance Card */}
       <motion.div variants={fadeUp} className="glass-card p-6 md:p-8 relative overflow-hidden">
         <div className="absolute inset-0 pointer-events-none" style={{ background: 'var(--gradient-glow)' }} />
@@ -135,7 +167,7 @@ export default function DashboardPage() {
         {quickActions.map((action) => (
           <button
             key={action.label}
-            onClick={() => navigate(action.path)}
+            onClick={action.onClick}
             className="glass-card-hover p-4 flex flex-col items-center gap-3 group"
           >
             <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${action.color} flex items-center justify-center transition-transform duration-300 group-hover:scale-110`}>
