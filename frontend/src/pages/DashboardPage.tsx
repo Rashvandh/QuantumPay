@@ -103,7 +103,7 @@ export default function DashboardPage() {
     { icon: Send, label: 'Send Money', path: '/send', color: 'from-blue-500 to-blue-600' },
     { icon: Plus, label: 'Add Money', path: '/add-money', color: 'from-emerald-500 to-emerald-600' },
     { icon: Clock, label: 'History', path: '/transactions', color: 'from-violet-500 to-violet-600' },
-    { icon: User, label: 'Profile', path: '/dashboard', color: 'from-amber-500 to-amber-600' },
+    { icon: User, label: 'Profile', path: '/profile', color: 'from-amber-500 to-amber-600' },
   ];
 
   return (
