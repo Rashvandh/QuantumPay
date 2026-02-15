@@ -5,6 +5,8 @@ interface User {
   id: string;
   name: string;
   email: string;
+  upiId: string;
+  walletBalance: number;
 }
 
 interface AuthContextType {
@@ -36,7 +38,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       // Validate the token by fetching the profile from the backend
       apiFetch(API_ENDPOINTS.auth.me)
         .then((res: any) => {
-          setUser({ id: res._id, name: res.name, email: res.email });
+          setUser({
+            id: res._id,
+            name: res.name,
+            email: res.email,
+            upiId: res.upiId,
+            walletBalance: res.walletBalance
+          });
         })
         .catch(() => {
           removeToken();
@@ -53,13 +61,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const response = await apiFetch(API_ENDPOINTS.auth.login, {
         method: 'POST',
         body: JSON.stringify({ email, password }),
-      });
+      }) as any;
 
       if (!response || !response.token) throw new Error('Invalid response from server');
 
       setToken(response.token);
       setTokenState(response.token);
-      setUser({ id: response._id, name: response.name, email: response.email });
+      setUser({
+        id: response._id,
+        name: response.name,
+        email: response.email,
+        upiId: response.upiId,
+        walletBalance: response.walletBalance
+      });
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Login failed';
       setAuthError(message);

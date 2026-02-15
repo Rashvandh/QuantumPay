@@ -12,6 +12,7 @@ import DashboardPage from "@/pages/DashboardPage";
 import SendMoneyPage from "@/pages/SendMoneyPage";
 import AddMoneyPage from "@/pages/AddMoneyPage";
 import TransactionHistoryPage from "@/pages/TransactionHistoryPage";
+import ProfilePage from "@/pages/ProfilePage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -38,6 +39,7 @@ const App = () => (
               <Route path="/send" element={<SendMoneyPage />} />
               <Route path="/add-money" element={<AddMoneyPage />} />
               <Route path="/transactions" element={<TransactionHistoryPage />} />
+              <Route path="/profile" element={<ProfilePage />} />
             </Route>
             <Route path="*" element={<NotFound />} />
           </Routes>

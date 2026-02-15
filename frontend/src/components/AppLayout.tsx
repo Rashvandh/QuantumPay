@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { NavLink, useNavigate, Outlet } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
-import { LayoutDashboard, Send, Plus, Clock, LogOut, Menu, X, Zap } from 'lucide-react';
+import { LayoutDashboard, Send, Plus, Clock, LogOut, Menu, X, Zap, User as UserIcon } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const navItems = [
@@ -9,6 +9,7 @@ const navItems = [
   { icon: Send, label: 'Send Money', path: '/send' },
   { icon: Plus, label: 'Add Money', path: '/add-money' },
   { icon: Clock, label: 'History', path: '/transactions' },
+  { icon: UserIcon, label: 'Profile', path: '/profile' },
 ];
 
 export default function AppLayout() {
@@ -27,7 +28,7 @@ export default function AppLayout() {
       <aside className="hidden md:flex w-64 flex-col border-r border-border bg-card/50 backdrop-blur-sm">
         <div className="p-6 border-b border-border">
           <div className="flex items-center gap-2">
-            <div className="w-9 h-9 rounded-xl flex items-center justify-center" style={{ background: 'var(--gradient-primary)' }}>
+            <div className="px-2 py-1.5 rounded-xl flex items-center justify-center" style={{ background: 'var(--gradient-primary)' }}>
               <Zap className="h-5 w-5 text-white" />
             </div>
             <span className="text-xl font-bold gradient-text">QuantumPay</span>
@@ -39,10 +40,9 @@ export default function AppLayout() {
               key={item.path}
               to={item.path}
               className={({ isActive }) =>
-                `flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 ${
-                  isActive
-                    ? 'bg-primary/10 text-primary glow-primary'
-                    : 'text-muted-foreground hover:bg-secondary hover:text-foreground'
+                `flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 ${isActive
+                  ? 'bg-primary/10 text-primary glow-primary'
+                  : 'text-muted-foreground hover:bg-secondary hover:text-foreground'
                 }`
               }
             >
@@ -52,15 +52,21 @@ export default function AppLayout() {
           ))}
         </nav>
         <div className="p-4 border-t border-border">
-          <div className="flex items-center gap-3 px-4 py-2 mb-3">
-            <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-xs font-bold text-primary">
+          <NavLink
+            to="/profile"
+            className={({ isActive }) =>
+              `flex items-center gap-3 px-4 py-3 rounded-xl mb-3 transition-all duration-200 ${isActive ? 'bg-primary/10 text-primary glow-primary' : 'hover:bg-secondary'
+              }`
+            }
+          >
+            <div className="w-9 h-9 min-w-[36px] rounded-full bg-primary/20 flex items-center justify-center text-xs font-bold text-primary">
               {user?.name?.charAt(0).toUpperCase() || 'U'}
             </div>
             <div className="flex-1 min-w-0">
               <p className="text-sm font-medium text-foreground truncate">{user?.name || 'User'}</p>
               <p className="text-xs text-muted-foreground truncate">{user?.email}</p>
             </div>
-          </div>
+          </NavLink>
           <button
             onClick={handleLogout}
             className="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-all duration-200 w-full"
@@ -100,8 +106,7 @@ export default function AppLayout() {
                   to={item.path}
                   onClick={() => setIsMobileMenuOpen(false)}
                   className={({ isActive }) =>
-                    `flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 ${
-                      isActive ? 'bg-primary/10 text-primary' : 'text-muted-foreground hover:bg-secondary hover:text-foreground'
+                    `flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 ${isActive ? 'bg-primary/10 text-primary' : 'text-muted-foreground hover:bg-secondary hover:text-foreground'
                     }`
                   }
                 >
