@@ -10,6 +10,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "server": "npm run server --prefix backend",
+    "postinstall": "npm install --prefix backend",
     "dev": "concurrently \"npm run server --prefix backend\" \"npm run dev --prefix frontend\"",
     "start": "npm run dev"
   },
